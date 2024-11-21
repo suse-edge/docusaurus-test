@@ -12,7 +12,7 @@ endif::[]
 
 === Introduction
 
-Direct network provisioning is a feature that allows you to automate the provisioning of downstream clusters. This feature is useful when you have many downstream clusters to provision, and you want to automate the process.
+Directed network provisioning is a feature that allows you to automate the provisioning of downstream clusters. This feature is useful when you have many downstream clusters to provision, and you want to automate the process.
 
 A <<atip-management-cluster,management cluster>> automates deployment of the following components:
 
@@ -148,7 +148,6 @@ growfs /
 Add your own custom scripts to be executed during the provisioning process using the same approach.
 For more information, see <<quickstart-eib>>.
 
-The bug related to this workaround is https://bugzilla.suse.com/show_bug.cgi?id=1217430
 ====
 
 [#add-telco-feature-eib]
@@ -225,9 +224,10 @@ if [ ! -f "${NETWORK_DATA_FILE}" ]; then
 fi
 
 DESIRED_HOSTNAME=$(cat /mnt/openstack/latest/meta_data.json | tr ',{}' '\n' | grep '\"metal3-name\"' | sed 's/.*\"metal3-name\": \"\(.*\)\"/\1/')
+echo "${DESIRED_HOSTNAME}" > /etc/hostname
 
 mkdir -p /tmp/nmc/{desired,generated}
-cp ${NETWORK_DATA_FILE} /tmp/nmc/desired/${DESIRED_HOSTNAME}.yaml
+cp ${NETWORK_DATA_FILE} /tmp/nmc/desired/_all.yaml
 umount /mnt
 
 ./nmc generate --config-dir /tmp/nmc/desired --output-dir /tmp/nmc/generated
@@ -413,11 +413,11 @@ $ ./edge-load-oci-artefacts.sh -ad edge-release-oci-tgz-20240705 -r myregistry:5
 ----
 $ cat > edge-release-images.txt <<EOF
 rancher/hardened-sriov-network-operator:v1.2.0-build20240327
-rancher/rancher/hardened-sriov-network-config-daemon:v1.2.0-build20240327
-rancher/hardened-sriov-cni:v1.2.0-build20240327
-rancher/hardened-ib-sriov-cni:v1.2.0-build20240327
-rancher/hardened-sriov-network-device-plugin:v1.2.0-build20240327
-rancher/hardened-sriov-network-resources-injector:v1.2.0-build20240327
+rancher/hardened-sriov-network-config-daemon:v1.2.0-build20240327
+rancher/hardened-sriov-cni:v2.7.0-build20240327
+rancher/hardened-ib-sriov-cni:v1.0.3-build20240327
+rancher/hardened-sriov-network-device-plugin:v3.6.2-build20240327
+rancher/hardened-sriov-network-resources-injector:v1.5-build20240327
 rancher/hardened-sriov-network-webhook:v1.2.0-build20240327
 EOF
 ----
@@ -426,22 +426,15 @@ EOF
 +
 [,shell]
 ----
-$ ./edge-save-images.sh -al ./edge-release-images.txt -s registry.suse.com
-Pulled: registry.suse.com/rancher/hardened-sriov-network-operator:v1.2.0-build20240327
-Pulled: registry.suse.com/rancher/rancher/hardened-sriov-network-config-daemon:v1.2.0-build20240327
-Pulled: registry.suse.com/rancher/hardened-sriov-cni:v1.2.0-build20240327
-Pulled: registry.suse.com/rancher/hardened-ib-sriov-cni:v1.2.0-build20240327
-Pulled: registry.suse.com/rancher/hardened-sriov-network-device-plugin:v1.2.0-build20240327
-Pulled: registry.suse.com/rancher/hardened-sriov-network-resources-injector:v1.2.0-build20240327
-Pulled: registry.suse.com/rancher/hardened-sriov-network-webhook:v1.2.0-build20240327
-a edge-release-images-tgz-20240705
-a edge-release-images-tgz-20240705/hardened-sriov-network-operator-v1.2.0-build20240327.tar.gz
-a edge-release-images-tgz-20240705/hardened-sriov-network-config-daemon-v1.2.0-build20240327.tar.gz
-a edge-release-images-tgz-20240705/hardened-sriov-cni-v1.2.0-build20240327.tar.gz
-a edge-release-images-tgz-20240705/hardened-ib-sriov-cni-v1.2.0-build20240327.tar.gz
-a edge-release-images-tgz-20240705/hardened-sriov-network-device-plugin-v1.2.0-build20240327.tar.gz
-a edge-release-images-tgz-20240705/hardened-sriov-network-resources-injector-v1.2.0-build20240327.tar.gz
-a edge-release-images-tgz-20240705/hardened-sriov-network-webhook-v1.2.0-build20240327.tar.gz
+$ ./edge-save-images.sh -l ./edge-release-images.txt -s registry.suse.com
+Image pull success: registry.suse.com/rancher/hardened-sriov-network-operator:v1.2.0-build20240327
+Image pull success: registry.suse.com/rancher/hardened-sriov-network-config-daemon:v1.2.0-build20240327
+Image pull success: registry.suse.com/rancher/hardened-sriov-cni:v2.7.0-build20240327
+Image pull success: registry.suse.com/rancher/hardened-ib-sriov-cni:v1.0.3-build20240327
+Image pull success: registry.suse.com/rancher/hardened-sriov-network-device-plugin:v3.6.2-build20240327
+Image pull success: registry.suse.com/rancher/hardened-sriov-network-resources-injector:v1.5-build20240327
+Image pull success: registry.suse.com/rancher/hardened-sriov-network-webhook:v1.2.0-build20240327
+Creating edge-images.tar.gz with 7 images
 ----
 +
 .. Upload your tarball file to your private registry (e.g. `myregistry:5000`) using the following https://github.com/suse-edge/fleet-examples/blob/release-3.0/scripts/day2/edge-load-images.sh[script] to preload your private registry with the images downloaded in the previous step:
@@ -471,7 +464,7 @@ or some other locally accessible server.  In the examples below, we refer to thi
 
 
 [#single-node]
-=== Downstream cluster provisioning with Direct network provisioning (single-node)
+=== Downstream cluster provisioning with Directed network provisioning (single-node)
 
 This section describes the workflow used to automate the provisioning of a single-node downstream cluster using directed network provisioning.
 This is the simplest way to automate the provisioning of a downstream cluster.
@@ -608,7 +601,7 @@ spec:
 The `RKE2ControlPlane` object specifies the control-plane configuration to be used and the `Metal3MachineTemplate` object specifies the control-plane image to be used.
 Also, it contains the information about the number of replicas to be used (in this case, one) and the `CNI` plug-in to be used (in this case, `Cilium`).
 The agentConfig block contains the `Ignition` format to be used and the `additionalUserData` to be used to configure the `RKE2` node with information like a systemd named `rke2-preinstall.service` to replace automatically the `BAREMETALHOST_UUID` and `node-name` during the provisioning process using the Ironic information.
-The last block of information contains the Kubernetes version to be used. `$\{RKE2_VERSION\}` is the version of `RKE2` to be used replacing this value (for example, `v1.28.9+rke2r1`).
+The last block of information contains the Kubernetes version to be used. `$\{RKE2_VERSION\}` is the version of `RKE2` to be used replacing this value (for example, `v1.28.10+rke2r1`).
 
 [,yaml]
 ----
@@ -692,7 +685,7 @@ The `Metal3DataTemplate` object specifies the `metaData` for the downstream clus
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3DataTemplate
 metadata:
-  name: single-node-cluster-controlplane-template
+  name: multinode-node-cluster-controlplane-template
   namespace: default
 spec:
   clusterName: single-node-cluster
@@ -715,7 +708,7 @@ $ kubectl apply -f capi-provisioning-example.yaml
 
 
 [#multi-node]
-=== Downstream cluster provisioning with Direct network provisioning (multi-node)
+=== Downstream cluster provisioning with Directed network provisioning (multi-node)
 
 This section describes the workflow used to automate the provisioning of a multi-node downstream cluster using directed network provisioning and `MetalLB` as a load-balancer strategy.
 This is the simplest way to automate the provisioning of a downstream cluster. The following diagram shows the workflow used to automate the provisioning of a multi-node downstream cluster using directed network provisioning and `MetalLB`.
@@ -803,7 +796,7 @@ The `BaremetalHost` object is in the `registering` state until the `BMC` credent
 
 *Provision step*
 
-Once the three bar metal hosts are enrolled and available, the next step is to provision the bare-metal hosts to install and configure the operating system and the Kubernetes cluster, creating a load balancer to manage them.
+Once the three bare-metal hosts are enrolled and available, the next step is to provision the bare-metal hosts to install and configure the operating system and the Kubernetes cluster, creating a load balancer to manage them.
 To do that, the following file (`capi-provisioning-example.yaml`) must be created in the management cluster with the following information (the `capi-provisioning-example.yaml can be generated by joining the following blocks).
 
 [NOTE]
@@ -864,7 +857,7 @@ The `RKE2ControlPlane` object specifies the control-plane configuration to be us
     ** The `storage` block which contains the Helm charts to be used to install the `MetalLB` and the `endpoint-copier-operator`.
     ** The `metalLB` custom resource file with the `IPaddressPool` and the `L2Advertisement` to be used (replacing `$\{EDGE_VIP_ADDRESS\}` with the `VIP` address).
     ** The `endpoint-svc.yaml` file to be used to configure the `kubernetes-vip` service to be used by the `MetalLB` to manage the `VIP` address.
-* The last block of information contains the Kubernetes version to be used. The `$\{RKE2_VERSION\}` is the version of `RKE2` to be used replacing this value (for example, `v1.28.9+rke2r1`).
+* The last block of information contains the Kubernetes version to be used. The `$\{RKE2_VERSION\}` is the version of `RKE2` to be used replacing this value (for example, `v1.28.10+rke2r1`).
 
 [,yaml]
 ----
@@ -1034,7 +1027,7 @@ The `Metal3DataTemplate` object specifies the `metaData` for the downstream clus
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: Metal3DataTemplate
 metadata:
-  name: single-node-cluster-controlplane-template
+  name: multinode-node-cluster-controlplane-template
   namespace: default
 spec:
   clusterName: single-node-cluster
@@ -1048,7 +1041,7 @@ spec:
         object: machine
 ----
 
-Once the file is created by joining the previous blocks, the following command has to be executed in the management cluster to start provisioning the new three bar metal hosts:
+Once the file is created by joining the previous blocks, the following command has to be executed in the management cluster to start provisioning the new three bare-metal hosts:
 
 [,shell]
 ----
@@ -1071,8 +1064,8 @@ The following sections describe the additional steps required to enable provisio
 
 Use the following two sections as the base to enroll and provision the hosts:
 
-* xref:single-node[Downstream cluster provisioning with Direct network provisioning (single-node)]
-* xref:multi-node[Downstream cluster provisioning with Direct network provisioning (multi-node)]
+* xref:single-node[Downstream cluster provisioning with Directed network provisioning (single-node)]
+* xref:multi-node[Downstream cluster provisioning with Directed network provisioning (multi-node)]
 
 The changes required to enable the advanced network configuration are the following:
 
@@ -1205,8 +1198,8 @@ The directed network provisioning workflow allows to automate the Telco features
 
 Use the following two sections as the base to enroll and provision the hosts:
 
-* xref:single-node[Downstream cluster provisioning with Direct network provisioning (single-node)]
-* xref:multi-node[Downstream cluster provisioning with Direct network provisioning (multi-node)]
+* xref:single-node[Downstream cluster provisioning with Directed network provisioning (single-node)]
+* xref:multi-node[Downstream cluster provisioning with Directed network provisioning (multi-node)]
 
 The Telco features covered in this section are the following:
 
@@ -1260,7 +1253,7 @@ To make the process clear, the changes required on that block (`RKE2ControlPlane
     ** `cpu-partitioning.service` to enable the isolation cores of the `CPU` (for example, `1-30,33-62`).
     ** `sriov-custom-auto-vfs.service` to install the `sriov` Helm chart, wait until custom resources are created and run the `/var/sriov-auto-filler.sh` to replace the values in the config map `sriov-custom-auto-config` and create the `sriovnetworknodepolicy` to be used by the workloads.
 
-* The `$\{RKE2_VERSION\}` is the version of `RKE2` to be used replacing this value (for example, `v1.28.9+rke2r1`).
+* The `$\{RKE2_VERSION\}` is the version of `RKE2` to be used replacing this value (for example, `v1.28.10+rke2r1`).
 
 With all these changes mentioned, the `RKE2ControlPlane` block in the `capi-provisioning-example.yaml` will look like the following:
 
@@ -1619,9 +1612,9 @@ The directed network provisioning workflow allows to automate the provisioning o
 
 . In case of using SR-IOV or any other custom workload, the images required to run the workloads must be preloaded in your private registry following the xref:preload-private-registry[preload private registry section].
 
-==== Enroll the bare metal hosts in air-gap scenarios
+==== Enroll the bare-metal hosts in air-gap scenarios
 
-The process to enroll the bare metal hosts in the management cluster is the same as described in the xref:enroll-bare-metal-host[previous section].
+The process to enroll the bare-metal hosts in the management cluster is the same as described in the xref:enroll-bare-metal-host[previous section].
 
 ==== Provision the downstream cluster in air-gap scenarios
 

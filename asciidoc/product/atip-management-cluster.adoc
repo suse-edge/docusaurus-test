@@ -18,7 +18,7 @@ From a technical point of view, the management cluster contains the following co
 * `SUSE Linux Enterprise Micro` as the OS. Depending on the use case, some configurations like networking, storage, users and kernel arguments can be customized.
 * `RKE2` as the Kubernetes cluster. Depending on the use case, it can be configured to use specific CNI plugins, such as `Multus`, `Cilium`, etc.
 * `Rancher` as the management platform to manage the lifecycle of the clusters.
-* `Metal^3^` as the component to manage the lifecycle of the bare metal nodes.
+* `Metal^3^` as the component to manage the lifecycle of the bare-metal nodes.
 * `CAPI` as the component to manage the lifecycle of the Kubernetes clusters (downstream clusters). With ATIP, also the `RKE2 CAPI Provider` is used to manage the lifecycle of the RKE2 clusters (downstream clusters).
 
 With all components mentioned above, the management cluster can manage the lifecycle of downstream clusters, using a declarative approach to manage the infrastructure and applications.
@@ -40,7 +40,7 @@ The following steps are necessary to set up the management cluster (using a sing
 
 image::product-atip-mgmtcluster1.png[]
 
-There are three main steps to set up the management cluster using a declarative approach:
+The following are the main steps to set up the management cluster using a declarative approach:
 
 . **xref:mgmt-cluster-image-preparation-connected[Image preparation for connected environments]**: The first step is to prepare the manifests and files with all the necessary configurations to be used in connected environments.
 
@@ -183,7 +183,7 @@ kubernetes:
         createNamespace: true
         installationNamespace: kube-system
       - name: metal3-chart
-        version: 0.7.1
+        version: 0.7.3
         repositoryName: suse-edge-charts
         targetNamespace: metal3-system
         createNamespace: true
@@ -204,7 +204,7 @@ kubernetes:
         installationNamespace: kube-system
         valuesFile: neuvector.yaml
       - name: rancher
-        version: 2.8.4
+        version: 2.8.5
         repositoryName: rancher-prime
         targetNamespace: cattle-system
         createNamespace: true
@@ -219,19 +219,17 @@ kubernetes:
         url: oci://registry.suse.com/edge
       - name: rancher-prime
         url: https://charts.rancher.com/server-charts/prime
-    network:
-      apiHost: ${API_HOST}
-      apiVIP: ${API_VIP}
-    nodes:
-      - hostname: mgmt-cluster-node1
-        initializer: true
-        type: server
-#     - hostname: mgmt-cluster-node2
-#       initializer: true
-#       type: server
-#     - hostname: mgmt-cluster-node3
-#       initializer: true
-#       type: server
+  network:
+    apiHost: ${API_HOST}
+    apiVIP: ${API_VIP}
+  nodes:
+    - hostname: mgmt-cluster-node1
+      initializer: true
+      type: server
+#   - hostname: mgmt-cluster-node2
+#     type: server
+#   - hostname: mgmt-cluster-node3
+#     type: server
 ----
 
 To explain the fields and values in the `mgmt-cluster.yaml` definition file, we have divided it into the following sections.
@@ -308,7 +306,7 @@ kubernetes:
         createNamespace: true
         installationNamespace: kube-system
       - name: metal3-chart
-        version: 0.7.1
+        version: 0.7.3
         repositoryName: suse-edge-charts
         targetNamespace: metal3-system
         createNamespace: true
@@ -329,7 +327,7 @@ kubernetes:
         installationNamespace: kube-system
         valuesFile: neuvector.yaml
       - name: rancher
-        version: 2.8.4
+        version: 2.8.5
         repositoryName: rancher-prime
         targetNamespace: cattle-system
         createNamespace: true
@@ -348,16 +346,16 @@ kubernetes:
       apiHost: ${API_HOST}
       apiVIP: ${API_VIP}
     nodes:
-      - hostname: mgmt-cluster1
-        initializer: true
-        type: server
-#      - hostname: mgmt-cluster2
-#        type: server
-#      - hostname: mgmt-cluster3
-#        type: server
+    - hostname: mgmt-cluster-node1
+      initializer: true
+      type: server
+#   - hostname: mgmt-cluster-node2
+#     type: server
+#   - hostname: mgmt-cluster-node3
+#     type: server
 ----
 
-where `version` is the version of Kubernetes to be installed. In our case, we are using an RKE2 cluster, so the version must be minor less than 1.29 to be compatible with `Rancher` (for example, `v1.28.9+rke2r1`).
+where `version` is the version of Kubernetes to be installed. In our case, we are using an RKE2 cluster, so the version must be minor less than 1.29 to be compatible with `Rancher` (for example, `v1.28.10+rke2r1`).
 
 The `helm` section contains the list of Helm charts to be installed, the repositories to be used, and the version configuration for all of them.
 
@@ -369,8 +367,9 @@ The `nodes` section contains the list of nodes to be used in the cluster. The `n
 
 [NOTE]
 ====
-The names of the nodes must be unique in the cluster, and the `initializer` field mustbe set to `true` for the first node in the list.
-The names of the nodes must be the same as the host names defined in the `network` section matching directly with the file name in the `network` section.
+* The names of the nodes must be unique in the cluster.
+* Optionally, use the `initializer` field to specify the bootstrap host, otherwise it will be the first node in the list.
+* The names of the nodes must be the same as the host names defined in the <<mgmt-cluster-network-folder, Network Folder>> when network configuration is required.
 ====
 
 [#mgmt-cluster-custom-folder]
@@ -416,7 +415,7 @@ export METAL3_CHART_TARGETNAMESPACE="metal3-system"
 export METAL3_CLUSTERCTLVERSION="1.6.2"
 export METAL3_CAPICOREVERSION="1.6.2"
 export METAL3_CAPIMETAL3VERSION="1.6.0"
-export METAL3_CAPIRKE2VERSION="0.2.6"
+export METAL3_CAPIRKE2VERSION="0.4.1"
 export METAL3_CAPIPROVIDER="rke2"
 export METAL3_CAPISYSTEMNAMESPACE="capi-system"
 export METAL3_RKE2BOOTSTRAPNAMESPACE="rke2-bootstrap-system"
@@ -1003,7 +1002,7 @@ If you want to use DHCP to get the IP address, you can use the following configu
 ----
 
 ## This is an example of a dhcp network configuration for a management cluster
-## interfaces:
+interfaces:
 - name: eth0
   type: ethernet
   state: up
@@ -1126,7 +1125,7 @@ kubernetes:
         createNamespace: true
         installationNamespace: kube-system
       - name: metal3-chart
-        version: 0.7.1
+        version: 0.7.3
         repositoryName: suse-edge-charts
         targetNamespace: metal3-system
         createNamespace: true
@@ -1147,7 +1146,7 @@ kubernetes:
         installationNamespace: kube-system
         valuesFile: neuvector.yaml
       - name: rancher
-        version: 2.8.4
+        version: 2.8.5
         repositoryName: rancher-prime
         targetNamespace: cattle-system
         createNamespace: true
@@ -1166,14 +1165,13 @@ kubernetes:
       apiHost: ${API_HOST}
       apiVIP: ${API_VIP}
     nodes:
-      - hostname: mgmt-cluster-node1
-        initializer: true
-        type: server
-#     - hostname: mgmt-cluster-node2
-#       initializer: true
-#       type: server
-#     - hostname: mgmt-cluster-node3
-#       initializer: true
+    - hostname: mgmt-cluster-node1
+      initializer: true
+      type: server
+#   - hostname: mgmt-cluster-node2
+#     type: server
+#   - hostname: mgmt-cluster-node3
+#     type: server
 #       type: server
 embeddedArtifactRegistry:
   images:
@@ -1197,14 +1195,14 @@ embeddedArtifactRegistry:
     - name: registry.rancher.com/rancher/hardened-etcd:v3.5.9-k3s1-build20240418
     - name: registry.rancher.com/rancher/hardened-flannel:v0.25.1-build20240423
     - name: registry.rancher.com/rancher/hardened-k8s-metrics-server:v0.7.1-build20240401
-    - name: registry.rancher.com/rancher/hardened-kubernetes:v1.28.9-rke2r1-build20240416
+    - name: registry.rancher.com/rancher/hardened-kubernetes:v1.28.10-rke2r1-build20240416
     - name: registry.rancher.com/rancher/hardened-multus-cni:v4.0.2-build20240208
     - name: registry.rancher.com/rancher/hardened-node-feature-discovery:v0.14.1-build20230926
     - name: registry.rancher.com/rancher/hardened-whereabouts:v0.6.3-build20240208
     - name: registry.rancher.com/rancher/helm-project-operator:v0.2.1
     - name: registry.rancher.com/rancher/istio-kubectl:1.5.10
     - name: registry.rancher.com/rancher/jimmidyson-configmap-reload:v0.3.0
-    - name: registry.rancher.com/rancher/k3s-upgrade:v1.28.9-k3s1
+    - name: registry.rancher.com/rancher/k3s-upgrade:v1.28.10-k3s1
     - name: registry.rancher.com/rancher/klipper-helm:v0.8.3-build20240228
     - name: registry.rancher.com/rancher/klipper-lb:v0.4.7
     - name: registry.rancher.com/rancher/kube-api-auth:v0.2.1
@@ -1222,18 +1220,18 @@ embeddedArtifactRegistry:
     - name: registry.rancher.com/rancher/prometheus-federator:v0.3.4
     - name: registry.rancher.com/rancher/pushprox-client:v0.1.0-rancher2-client
     - name: registry.rancher.com/rancher/pushprox-proxy:v0.1.0-rancher2-proxy
-    - name: registry.rancher.com/rancher/rancher-agent:v2.8.4
+    - name: registry.rancher.com/rancher/rancher-agent:v2.8.5
     - name: registry.rancher.com/rancher/rancher-csp-adapter:v3.0.1
     - name: registry.rancher.com/rancher/rancher-webhook:v0.4.5
-    - name: registry.rancher.com/rancher/rancher:v2.8.4
+    - name: registry.rancher.com/rancher/rancher:v2.8.5
     - name: registry.rancher.com/rancher/rke-tools:v0.1.96
     - name: registry.rancher.com/rancher/rke2-cloud-provider:v1.29.3-build20240412
-    - name: registry.rancher.com/rancher/rke2-runtime:v1.28.9-rke2r1
-    - name: registry.rancher.com/rancher/rke2-upgrade:v1.28.9-rke2r1
+    - name: registry.rancher.com/rancher/rke2-runtime:v1.28.10-rke2r1
+    - name: registry.rancher.com/rancher/rke2-upgrade:v1.28.10-rke2r1
     - name: registry.rancher.com/rancher/security-scan:v0.2.15
     - name: registry.rancher.com/rancher/shell:v0.1.24
-    - name: registry.rancher.com/rancher/system-agent-installer-k3s:v1.28.9-k3s1
-    - name: registry.rancher.com/rancher/system-agent-installer-rke2:v1.28.9-rke2r1
+    - name: registry.rancher.com/rancher/system-agent-installer-k3s:v1.28.10-k3s1
+    - name: registry.rancher.com/rancher/system-agent-installer-rke2:v1.28.10-rke2r1
     - name: registry.rancher.com/rancher/system-agent:v0.3.6-suc
     - name: registry.rancher.com/rancher/system-upgrade-controller:v0.13.1
     - name: registry.rancher.com/rancher/ui-plugin-catalog:1.3.0
@@ -1253,8 +1251,8 @@ embeddedArtifactRegistry:
     - name: registry.rancher.com/rancher/mirrored-longhornio-longhorn-share-manager:v1.6.1
     - name: registry.rancher.com/rancher/mirrored-longhornio-longhorn-ui:v1.6.1
     - name: registry.rancher.com/rancher/mirrored-longhornio-support-bundle-kit:v0.0.36
-    - name: registry.suse.com/edge/cluster-api-provider-rke2-bootstrap:v0.2.6
-    - name: registry.suse.com/edge/cluster-api-provider-rke2-controlplane:v0.2.6
+    - name: registry.suse.com/edge/cluster-api-provider-rke2-bootstrap:v0.4.1
+    - name: registry.suse.com/edge/cluster-api-provider-rke2-controlplane:v0.4.1
     - name: registry.suse.com/edge/cluster-api-controller:v1.6.2
     - name: registry.suse.com/edge/cluster-api-provider-metal3:v1.6.0
     - name: registry.suse.com/edge/ip-address-manager:v1.6.0
@@ -1388,7 +1386,7 @@ ${KUBECTL} delete configmap ${METAL3LOCKCMNAME} -n ${METAL3LOCKNAMESPACE}
 |-- clusterctl.yaml
 |-- overrides
     |-- bootstrap-rke2
-    |   |-- v0.2.6
+    |   |-- v0.4.1
     |       |-- bootstrap-components.yaml
     |       |-- metadata.yaml
     |-- cluster-api
@@ -1396,7 +1394,7 @@ ${KUBECTL} delete configmap ${METAL3LOCKCMNAME} -n ${METAL3LOCKNAMESPACE}
     |       |-- core-components.yaml
     |       |-- metadata.yaml
     |-- control-plane-rke2
-    |   |-- v0.2.6
+    |   |-- v0.4.1
     |       |-- control-plane-components.yaml
     |       |-- metadata.yaml
     |-- infrastructure-metal3
@@ -1419,10 +1417,10 @@ providers:
     url: "/root/cluster-api/overrides/infrastructure-metal3/v1.6.0/infrastructure-components.yaml"
     type: "InfrastructureProvider"
   - name: "rke2"
-    url: "/root/cluster-api/overrides/bootstrap-rke2/v0.2.6/bootstrap-components.yaml"
+    url: "/root/cluster-api/overrides/bootstrap-rke2/v0.4.1/bootstrap-components.yaml"
     type: "BootstrapProvider"
   - name: "rke2"
-    url: "/root/cluster-api/overrides/control-plane-rke2/v0.2.6/control-plane-components.yaml"
+    url: "/root/cluster-api/overrides/control-plane-rke2/v0.4.1/control-plane-components.yaml"
     type: "ControlPlaneProvider"
 images:
   all:
@@ -1434,15 +1432,15 @@ The `clusterctl` and the rest of the files included in the `overrides` folder ca
 [,shell]
 ----
 # clusterctl binary
-curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/1.6.2/clusterctl-linux-${GOARCH} -o /usr/local/bin/clusterct
+curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.6.2/clusterctl-linux-${GOARCH} -o /usr/local/bin/clusterct
 
 # boostrap-components (boostrap-rke2)
-curl -L https://github.com/rancher-sandbox/cluster-api-provider-rke2/releases/download/v0.2.6/bootstrap-components.yaml
-curl -L https://github.com/rancher-sandbox/cluster-api-provider-rke2/releases/download/v0.2.6/metadata.yaml
+curl -L https://github.com/rancher-sandbox/cluster-api-provider-rke2/releases/download/v0.4.1/bootstrap-components.yaml
+curl -L https://github.com/rancher-sandbox/cluster-api-provider-rke2/releases/download/v0.4.1/metadata.yaml
 
 # control-plane-components (control-plane-rke2)
-curl -L https://github.com/rancher-sandbox/cluster-api-provider-rke2/releases/download/v0.2.6/control-plane-components.yaml
-curl -L https://github.com/rancher-sandbox/cluster-api-provider-rke2/releases/download/v0.2.6/metadata.yaml
+curl -L https://github.com/rancher-sandbox/cluster-api-provider-rke2/releases/download/v0.4.1/control-plane-components.yaml
+curl -L https://github.com/rancher-sandbox/cluster-api-provider-rke2/releases/download/v0.4.1/metadata.yaml
 
 # cluster-api components
 curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.6.2/core-components.yaml

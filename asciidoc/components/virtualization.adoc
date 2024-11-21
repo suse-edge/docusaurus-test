@@ -66,9 +66,9 @@ This should show something similar to the following:
 [,shell]
 ----
 NAME                   STATUS   ROLES                       AGE     VERSION
-node1.edge.rdo.wales   Ready    control-plane,etcd,master   4h20m   v1.28.9+rke2r1
-node2.edge.rdo.wales   Ready    control-plane,etcd,master   4h15m   v1.28.9+rke2r1
-node3.edge.rdo.wales   Ready    control-plane,etcd,master   4h15m   v1.28.9+rke2r1
+node1.edge.rdo.wales   Ready    control-plane,etcd,master   4h20m   v1.28.10+rke2r1
+node2.edge.rdo.wales   Ready    control-plane,etcd,master   4h15m   v1.28.10+rke2r1
+node3.edge.rdo.wales   Ready    control-plane,etcd,master   4h15m   v1.28.10+rke2r1
 ----
 
 Now you can proceed to install the *KubeVirt* and *Containerized Data Importer (CDI)* Helm charts:
@@ -507,7 +507,7 @@ SUSE Edge Virtualization provides a UI extension for Rancher Manager, enabling b
 
 === Installation
 
-See xref:rancher-dashboard-extensions.adoc[Rancher Dashboard Extensions section] for installation guidance.
+See <<components-rancher-dashboard-extensions,Rancher Dashboard Extensions>> for installation guidance.
 
 [#kubevirt-dashboard-extension]
 === Using KubeVirt Rancher Dashboard Extension

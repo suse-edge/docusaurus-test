@@ -46,11 +46,11 @@ There are two different blocks, the management stack and the runtime stack:
 
 The following are high-level examples of workflows to understand the relationship between the management and the runtime components.
 
-Direct network provisioning is the workflow that enables the deployment of a new downstream cluster with all the components preconfigured and ready to run workloads with no manual intervention.
+Directed network provisioning is the workflow that enables the deployment of a new downstream cluster with all the components preconfigured and ready to run workloads with no manual intervention.
 
 ==== Example 1: Deploying a new management cluster with all components installed
 
-Using the <<components-eib,Edge Image Builder>> to create a new `ISO` image with the management stack included. You can then use this `ISO` image to install a new management cluster on VMs or bare metal.
+Using the <<components-eib,Edge Image Builder>> to create a new `ISO` image with the management stack included. You can then use this `ISO` image to install a new management cluster on VMs or bare-metal.
 
 image::product-atip-architecture2.png[]
 

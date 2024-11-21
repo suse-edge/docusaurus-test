@@ -40,7 +40,7 @@ Details about the NetworkManager Configurator (nmc) can be found in the https://
 
 SUSE Edge utilizes _nmc_ for the network customizations in the various different provisioning models:
 
-* Custom network configurations in the Direct Network Provisioning scenarios (<<quickstart-metal3>>)
+* Custom network configurations in the Directed Network Provisioning scenarios (<<quickstart-metal3>>)
 * Declarative static configurations in the Image Based Provisioning scenarios (<<quickstart-eib>>)
 
 == Configuring with Edge Image Builder
@@ -700,6 +700,7 @@ NAME              UUID                                  TYPE      DEVICE  FILENA
 Wired Connection  300ed658-08d4-4281-9f8c-d1b8882d29b9  ethernet  eth0    /var/run/NetworkManager/system-connections/default_connection.nmconnection
 ----
 
+[#networking-unified]
 === Unified node configurations
 
 There are occasions where relying on known MAC addresses is not an option. In these cases we can opt for the so-called _unified configuration_

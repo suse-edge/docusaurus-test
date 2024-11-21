@@ -174,7 +174,7 @@ operatingSystem:
     - username: root
       encryptedPassword: $6$jHugJNNd3HElGsUZ$eodjVe4te5ps44SVcWshdfWizrP.xAyd71CVEXazBJ/.v799/WRCBXxfYmunlBO2yp1hm/zb4r8EmnrrNCF.P/
 kubernetes:
-  version: v1.28.9+rke2r1
+  version: v1.28.10+rke2r1
 embeddedArtifactRegistry:
   images:
     - ...
@@ -184,8 +184,8 @@ The `image` section is required, and it specifies the input image, its architect
 
 The `operatingSystem` section is optional, and contains configuration to enable login on the provisioned systems with the `root/eib` username/password.
 
-The `kubernetes` section is optional, and it defines the Kubernetes type and version. We are going to use Kubernetes 1.28.9 and RKE2 by default.
-Use `kubernetes.version: v1.28.9+k3s1` if K3s is desired instead. Unless explicitly configured via the `kubernetes.nodes` field, all clusters we bootstrap in this guide will be single-node ones.
+The `kubernetes` section is optional, and it defines the Kubernetes type and version. We are going to use Kubernetes 1.28.10 and RKE2 by default.
+Use `kubernetes.version: v1.28.10+k3s1` if K3s is desired instead. Unless explicitly configured via the `kubernetes.nodes` field, all clusters we bootstrap in this guide will be single-node ones.
 
 The `embeddedArtifactRegistry` section will include all images which are only referenced and pulled at runtime for the specific component.
 
@@ -196,7 +196,7 @@ The `embeddedArtifactRegistry` section will include all images which are only re
 The <<components-rancher,Rancher>> deployment that will be demonstrated will be highly slimmed down for demonstration purposes. For your actual deployments, additional artifacts may be necessary depending on your configuration.
 ====
 
-The https://github.com/rancher/rancher/releases/tag/v2.8.4[Rancher v2.8.4] release assets contain a `rancher-images.txt` file which lists all the images required for an air-gapped installation.
+The https://github.com/rancher/rancher/releases/tag/v2.8.5[Rancher v2.8.5] release assets contain a `rancher-images.txt` file which lists all the images required for an air-gapped installation.
 
 There are about 602 container images in total which means that the resulting CRB image would be roughly 28GB+. For our Rancher installation, we will strip down that list to the smallest working configuration. From there, you can add back any images you may need for your deployments.
 
@@ -215,7 +215,7 @@ operatingSystem:
     - username: root
       encryptedPassword: $6$jHugJNNd3HElGsUZ$eodjVe4te5ps44SVcWshdfWizrP.xAyd71CVEXazBJ/.v799/WRCBXxfYmunlBO2yp1hm/zb4r8EmnrrNCF.P/
 kubernetes:
-  version: v1.28.9+rke2r1
+  version: v1.28.10+rke2r1
   network:
     apiVIP: 192.168.100.151
   manifests:
@@ -224,7 +224,7 @@ kubernetes:
   helm:
     charts:
       - name: rancher
-        version: 2.8.4
+        version: 2.8.5
         repositoryName: rancher-prime
         valuesFile: rancher-values.yaml
         targetNamespace: cattle-system
@@ -250,9 +250,9 @@ embeddedArtifactRegistry:
     - name: registry.rancher.com/rancher/coreos-prometheus-config-reloader:v0.38.1
     - name: registry.rancher.com/rancher/coreos-prometheus-operator:v0.38.1
     - name: registry.rancher.com/rancher/flannel-cni:v0.3.0-rancher9
-    - name: registry.rancher.com/rancher/fleet-agent:v0.9.4
-    - name: registry.rancher.com/rancher/fleet:v0.9.4
-    - name: registry.rancher.com/rancher/gitjob:v0.9.7
+    - name: registry.rancher.com/rancher/fleet-agent:v0.9.5
+    - name: registry.rancher.com/rancher/fleet:v0.9.5
+    - name: registry.rancher.com/rancher/gitjob:v0.9.8
     - name: registry.rancher.com/rancher/grafana-grafana:7.1.5
     - name: registry.rancher.com/rancher/hardened-addon-resizer:1.8.20-build20240410
     - name: registry.rancher.com/rancher/hardened-calico:v3.27.3-build20240423
@@ -263,14 +263,14 @@ embeddedArtifactRegistry:
     - name: registry.rancher.com/rancher/hardened-etcd:v3.5.9-k3s1-build20240418
     - name: registry.rancher.com/rancher/hardened-flannel:v0.25.1-build20240423
     - name: registry.rancher.com/rancher/hardened-k8s-metrics-server:v0.7.1-build20240401
-    - name: registry.rancher.com/rancher/hardened-kubernetes:v1.28.9-rke2r1-build20240416
+    - name: registry.rancher.com/rancher/hardened-kubernetes:v1.28.10-rke2r1-build20240514
     - name: registry.rancher.com/rancher/hardened-multus-cni:v4.0.2-build20240208
     - name: registry.rancher.com/rancher/hardened-node-feature-discovery:v0.14.1-build20230926
     - name: registry.rancher.com/rancher/hardened-whereabouts:v0.6.3-build20240208
     - name: registry.rancher.com/rancher/helm-project-operator:v0.2.1
     - name: registry.rancher.com/rancher/istio-kubectl:1.5.10
     - name: registry.rancher.com/rancher/jimmidyson-configmap-reload:v0.3.0
-    - name: registry.rancher.com/rancher/k3s-upgrade:v1.28.9-k3s1
+    - name: registry.rancher.com/rancher/k3s-upgrade:v1.28.10-k3s1
     - name: registry.rancher.com/rancher/klipper-helm:v0.8.3-build20240228
     - name: registry.rancher.com/rancher/klipper-lb:v0.4.7
     - name: registry.rancher.com/rancher/kube-api-auth:v0.2.1
@@ -286,26 +286,27 @@ embeddedArtifactRegistry:
     - name: registry.rancher.com/rancher/prom-prometheus:v2.18.2
     - name: registry.rancher.com/rancher/prometheus-auth:v0.2.2
     - name: registry.rancher.com/rancher/prometheus-federator:v0.3.4
-    - name: registry.rancher.com/rancher/pushprox-client:v0.1.0-rancher2-client
-    - name: registry.rancher.com/rancher/pushprox-proxy:v0.1.0-rancher2-proxy
-    - name: registry.rancher.com/rancher/rancher-agent:v2.8.4
+    - name: registry.rancher.com/rancher/pushprox-client:v0.1.3-rancher2-client
+    - name: registry.rancher.com/rancher/pushprox-proxy:v0.1.3-rancher2-proxy
+    - name: registry.rancher.com/rancher/rancher-agent:v2.8.5
     - name: registry.rancher.com/rancher/rancher-csp-adapter:v3.0.1
-    - name: registry.rancher.com/rancher/rancher-webhook:v0.4.5
-    - name: registry.rancher.com/rancher/rancher:v2.8.4
+    - name: registry.rancher.com/rancher/rancher-webhook:v0.4.7
+    - name: registry.rancher.com/rancher/rancher:v2.8.5
     - name: registry.rancher.com/rancher/rke-tools:v0.1.96
     - name: registry.rancher.com/rancher/rke2-cloud-provider:v1.29.3-build20240412
-    - name: registry.rancher.com/rancher/rke2-runtime:v1.28.9-rke2r1
-    - name: registry.rancher.com/rancher/rke2-upgrade:v1.28.9-rke2r1
+    - name: registry.rancher.com/rancher/rke2-runtime:v1.28.10-rke2r1
+    - name: registry.rancher.com/rancher/rke2-upgrade:v1.28.10-rke2r1
     - name: registry.rancher.com/rancher/security-scan:v0.2.15
-    - name: registry.rancher.com/rancher/shell:v0.1.24
-    - name: registry.rancher.com/rancher/system-agent-installer-k3s:v1.28.9-k3s1
-    - name: registry.rancher.com/rancher/system-agent-installer-rke2:v1.28.9-rke2r1
+    - name: registry.rancher.com/rancher/shell:v0.1.25
+    - name: registry.rancher.com/rancher/system-agent-installer-k3s:v1.28.10-k3s1
+    - name: registry.rancher.com/rancher/system-agent-installer-rke2:v1.28.10-rke2r1
     - name: registry.rancher.com/rancher/system-agent:v0.3.6-suc
     - name: registry.rancher.com/rancher/system-upgrade-controller:v0.13.1
-    - name: registry.rancher.com/rancher/ui-plugin-catalog:1.3.0
+    - name: registry.rancher.com/rancher/ui-plugin-catalog:1.4.0
     - name: registry.rancher.com/rancher/ui-plugin-operator:v0.1.1
     - name: registry.rancher.com/rancher/webhook-receiver:v0.2.5
     - name: registry.rancher.com/rancher/kubectl:v1.20.2
+    - name: registry.rancher.com/rancher/shell:v0.1.24
 ----
 
 As compared to the full list of 602 container images, this slimmed down version only contains 62 which makes the new CRB image only about 7GB.
@@ -536,7 +537,7 @@ operatingSystem:
     - username: root
       encryptedPassword: $6$jHugJNNd3HElGsUZ$eodjVe4te5ps44SVcWshdfWizrP.xAyd71CVEXazBJ/.v799/WRCBXxfYmunlBO2yp1hm/zb4r8EmnrrNCF.P/
 kubernetes:
-  version: v1.28.9+rke2r1
+  version: v1.28.10+rke2r1
   helm:
     charts:
       - name: neuvector-crd
@@ -662,7 +663,7 @@ operatingSystem:
     - username: root
       encryptedPassword: $6$jHugJNNd3HElGsUZ$eodjVe4te5ps44SVcWshdfWizrP.xAyd71CVEXazBJ/.v799/WRCBXxfYmunlBO2yp1hm/zb4r8EmnrrNCF.P/
 kubernetes:
-  version: v1.28.9+rke2r1
+  version: v1.28.10+rke2r1
   helm:
     charts:
       - name: longhorn
@@ -812,18 +813,18 @@ operatingSystem:
     - username: root
       encryptedPassword: $6$jHugJNNd3HElGsUZ$eodjVe4te5ps44SVcWshdfWizrP.xAyd71CVEXazBJ/.v799/WRCBXxfYmunlBO2yp1hm/zb4r8EmnrrNCF.P/
 kubernetes:
-  version: v1.28.9+rke2r1
+  version: v1.28.10+rke2r1
   helm:
     charts:
       - name: kubevirt-chart
         repositoryName: suse-edge
-        version: 0.2.4
+        version: 0.3.0
         targetNamespace: kubevirt-system
         createNamespace: true
         installationNamespace: kube-system
       - name: cdi-chart
         repositoryName: suse-edge
-        version: 0.2.3
+        version: 0.3.0
         targetNamespace: cdi-system
         createNamespace: true
         installationNamespace: kube-system
@@ -832,18 +833,18 @@ kubernetes:
         url: oci://registry.suse.com/edge
 embeddedArtifactRegistry:
   images:
-    - name: registry.suse.com/suse/sles/15.5/cdi-uploadproxy:1.58.0-150500.6.12.1
-    - name: registry.suse.com/suse/sles/15.5/cdi-uploadserver:1.58.0-150500.6.12.1
-    - name: registry.suse.com/suse/sles/15.5/cdi-apiserver:1.58.0-150500.6.12.1
-    - name: registry.suse.com/suse/sles/15.5/cdi-controller:1.58.0-150500.6.12.1
-    - name: registry.suse.com/suse/sles/15.5/cdi-importer:1.58.0-150500.6.12.1
-    - name: registry.suse.com/suse/sles/15.5/cdi-cloner:1.58.0-150500.6.12.1
-    - name: registry.suse.com/suse/sles/15.5/virt-api:1.1.1-150500.8.12.1
-    - name: registry.suse.com/suse/sles/15.5/virt-controller:1.1.1-150500.8.12.1
-    - name: registry.suse.com/suse/sles/15.5/virt-launcher:1.1.1-150500.8.12.1
-    - name: registry.suse.com/suse/sles/15.5/virt-handler:1.1.1-150500.8.12.1
-    - name: registry.suse.com/suse/sles/15.5/virt-exportproxy:1.1.1-150500.8.12.1
-    - name: registry.suse.com/suse/sles/15.5/virt-exportserver:1.1.1-150500.8.12.1
+    - name: registry.suse.com/suse/sles/15.5/cdi-uploadproxy:1.59.0-150500.6.18.1
+    - name: registry.suse.com/suse/sles/15.5/cdi-uploadserver:1.59.0-150500.6.18.1
+    - name: registry.suse.com/suse/sles/15.5/cdi-apiserver:1.59.0-150500.6.18.1
+    - name: registry.suse.com/suse/sles/15.5/cdi-controller:1.59.0-150500.6.18.1
+    - name: registry.suse.com/suse/sles/15.5/cdi-importer:1.59.0-150500.6.18.1
+    - name: registry.suse.com/suse/sles/15.5/cdi-cloner:1.59.0-150500.6.18.1
+    - name: registry.suse.com/suse/sles/15.5/virt-api:1.2.2-150500.8.21.1
+    - name: registry.suse.com/suse/sles/15.5/virt-controller:1.2.2-150500.8.21.1
+    - name: registry.suse.com/suse/sles/15.5/virt-launcher:1.2.2-150500.8.21.1
+    - name: registry.suse.com/suse/sles/15.5/virt-handler:1.2.2-150500.8.21.1
+    - name: registry.suse.com/suse/sles/15.5/virt-exportproxy:1.2.2-150500.8.21.1
+    - name: registry.suse.com/suse/sles/15.5/virt-exportserver:1.2.2-150500.8.21.1
 ----
 
 Let's build the image:
@@ -896,31 +897,34 @@ The output should be similar to the following, showing that everything has been 
 [,console]
 ----
 NAME                                   READY   STATUS    RESTARTS   AGE
-pod/virt-api-7c45477984-z226r          1/1     Running   0          2m4s
-pod/virt-controller-664d9986b5-8p8gm   1/1     Running   0          98s
-pod/virt-controller-664d9986b5-v2n4h   1/1     Running   0          98s
-pod/virt-handler-2fx8c                 1/1     Running   0          98s
-pod/virt-operator-5cf69867dc-hz5s8     1/1     Running   0          2m30s
-pod/virt-operator-5cf69867dc-kp266     1/1     Running   0          2m30s
+pod/virt-api-75dd5896c-ck24g           1/1     Running   0          2m11s
+pod/virt-controller-54b46dffbc-8j8x9   1/1     Running   0          106s
+pod/virt-controller-54b46dffbc-qhpkc   1/1     Running   0          106s
+pod/virt-handler-qbbcq                 1/1     Running   0          106s
+pod/virt-operator-b599bcd7b-mq87d      1/1     Running   0          2m38s
+pod/virt-operator-b599bcd7b-q7hkg      1/1     Running   0          2m38s
 
 NAME                                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
-service/kubevirt-operator-webhook     ClusterIP   10.43.210.235   <none>        443/TCP   2m7s
-service/kubevirt-prometheus-metrics   ClusterIP   None            <none>        443/TCP   2m7s
-service/virt-api                      ClusterIP   10.43.226.140   <none>        443/TCP   2m7s
-service/virt-exportproxy              ClusterIP   10.43.213.201   <none>        443/TCP   2m7s
+service/kubevirt-operator-webhook     ClusterIP   10.43.60.25     <none>        443/TCP   2m14s
+service/kubevirt-prometheus-metrics   ClusterIP   None            <none>        443/TCP   2m14s
+service/virt-api                      ClusterIP   10.43.70.57     <none>        443/TCP   2m14s
+service/virt-exportproxy              ClusterIP   10.43.255.129   <none>        443/TCP   2m14s
 
 NAME                          DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
-daemonset.apps/virt-handler   1         1         1       1            1           kubernetes.io/os=linux   98s
+daemonset.apps/virt-handler   1         1         1       1            1           kubernetes.io/os=linux   106s
 
 NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/virt-api          1/1     1            1           2m4s
-deployment.apps/virt-controller   2/2     2            2           98s
-deployment.apps/virt-operator     2/2     2            2           2m30s
+deployment.apps/virt-api          1/1     1            1           2m11s
+deployment.apps/virt-controller   2/2     2            2           106s
+deployment.apps/virt-operator     2/2     2            2           2m38s
 
 NAME                                         DESIRED   CURRENT   READY   AGE
-replicaset.apps/virt-api-7c45477984          1         1         1       2m4s
-replicaset.apps/virt-controller-664d9986b5   2         2         2       98s
-replicaset.apps/virt-operator-5cf69867dc     2         2         2       2m30s
+replicaset.apps/virt-api-75dd5896c           1         1         1       2m11s
+replicaset.apps/virt-controller-54b46dffbc   2         2         2       106s
+replicaset.apps/virt-operator-b599bcd7b      2         2         2       2m38s
+
+NAME                            AGE     PHASE
+kubevirt.kubevirt.io/kubevirt   2m38s   Deployed
 ----
 
 Verify CDI:
@@ -933,28 +937,28 @@ Verify CDI:
 The output should be similar to the following, showing that everything has been successfully deployed:
 [,console]
 ----
-NAME                                   READY   STATUS    RESTARTS   AGE
-pod/cdi-apiserver-db465b888-mdsmm      1/1     Running   0          3m6s
-pod/cdi-deployment-56c7d74995-vt9sw    1/1     Running   0          3m6s
-pod/cdi-operator-55c74f4b86-gkt58      1/1     Running   0          3m10s
-pod/cdi-uploadproxy-7d7b94b968-msg2h   1/1     Running   0          3m6s
+NAME                                  READY   STATUS    RESTARTS   AGE
+pod/cdi-apiserver-85dff89756-7j97k    1/1     Running   0          2m56s
+pod/cdi-deployment-66b96bf79f-6whvj   1/1     Running   0          2m56s
+pod/cdi-operator-8f5f4654d-786rc      1/1     Running   0          3m
+pod/cdi-uploadproxy-77db4ccd8-mzjz5   1/1     Running   0          2m56s
 
 NAME                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-service/cdi-api                  ClusterIP   10.43.161.135   <none>        443/TCP    3m6s
-service/cdi-prometheus-metrics   ClusterIP   10.43.161.159   <none>        8080/TCP   3m6s
-service/cdi-uploadproxy          ClusterIP   10.43.25.136    <none>        443/TCP    3m6s
+service/cdi-api                  ClusterIP   10.43.66.178    <none>        443/TCP    2m56s
+service/cdi-prometheus-metrics   ClusterIP   10.43.99.119    <none>        8080/TCP   2m56s
+service/cdi-uploadproxy          ClusterIP   10.43.207.154   <none>        443/TCP    2m56s
 
 NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/cdi-apiserver     1/1     1            1           3m6s
-deployment.apps/cdi-deployment    1/1     1            1           3m6s
-deployment.apps/cdi-operator      1/1     1            1           3m10s
-deployment.apps/cdi-uploadproxy   1/1     1            1           3m6s
+deployment.apps/cdi-apiserver     1/1     1            1           2m56s
+deployment.apps/cdi-deployment    1/1     1            1           2m56s
+deployment.apps/cdi-operator      1/1     1            1           3m
+deployment.apps/cdi-uploadproxy   1/1     1            1           2m56s
 
-NAME                                         DESIRED   CURRENT   READY   AGE
-replicaset.apps/cdi-apiserver-db465b888      1         1         1       3m6s
-replicaset.apps/cdi-deployment-56c7d74995    1         1         1       3m6s
-replicaset.apps/cdi-operator-55c74f4b86      1         1         1       3m10s
-replicaset.apps/cdi-uploadproxy-7d7b94b968   1         1         1       3m6s
+NAME                                        DESIRED   CURRENT   READY   AGE
+replicaset.apps/cdi-apiserver-85dff89756    1         1         1       2m56s
+replicaset.apps/cdi-deployment-66b96bf79f   1         1         1       2m56s
+replicaset.apps/cdi-operator-8f5f4654d      1         1         1       3m
+replicaset.apps/cdi-uploadproxy-77db4ccd8   1         1         1       2m56s
 ----
 
 == Troubleshooting
